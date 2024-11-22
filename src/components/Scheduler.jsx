@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useSchedule } from '../context/ScheduleContext';
+import { useNavigate } from 'react-router-dom';
 
 const Scheduler = () => {
-    const { schedule, addCourse, removeCourse } = useSchedule();
+    const navigate = useNavigate();
+    const { schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle }= useSchedule();
     const [filter, setFilter] = useState('');
     const [courses, setCourses] = useState([
         {
@@ -147,7 +149,6 @@ const Scheduler = () => {
             ]
         },
         {
-            // CS382-B meets M/W/F11:00AM to 11:50AM
             id: 11,
             name: 'CS 382-B',
             courseName: 'Computer Architecture',
@@ -159,17 +160,45 @@ const Scheduler = () => {
                 { start: '2024-11-13T11:00:00', end: '2024-11-13T11:50:00' },
                 { start: '2024-11-15T11:00:00', end: '2024-11-15T11:50:00' }
             ]
+        },
+        {
+            // cs 521-A meets thursday from 6:30pm to 9
+            id: 12,
+            name: 'CS 521-A',
+            courseName: 'TCP/IP Networking',
+            courseCode: 'CS 521',
+            sectionCode: 'A',
+            meetingTimes: 'TH 6:30PM - 9:00PM',
+            meetings: [
+                { start: '2024-11-14T18:30:00', end: '2024-11-14T21:00:00' }
+            ]
+        },
+        {
+            id: 13,
+            name: 'CS 559-A',
+            courseName: 'Machine Learning',
+            courseCode: 'CS 559',
+            sectionCode: 'A',
+            meetingTimes: 'F 3:00PM - 5:30PM',
+            meetings: [
+                { start: '2024-11-15T15:00:00', end: '2024-11-15T17:30:00' }
+            ]
         }
     ]);
-
+    const [seenInstr, setSeenInstr] = useState(false);
     const filteredCourses = courses.filter((course) =>
         course.name.toLowerCase().includes(filter.toLowerCase())
     );
 
     return (
         <div style={{ display: 'flex' }}>
-            <div style={{ width: '20%', position: 'fixed' }}>
-                <button onClick={() => window.history.back()}>Go Back</button>
+            <div style={{ width: '15%', position: 'fixed' }}>
+                <button onClick={() => navigate('/')}>Go Back</button>
+                {schedule.length > 0 && (
+                <button onClick={() => navigate('/view-schedule')}>
+                    View Schedule
+                </button>
+                )}
                 <br />
                 <input
                     type="text"
@@ -178,29 +207,68 @@ const Scheduler = () => {
                     onChange={(e) => setFilter(e.target.value)}
                 />
             </div>
-            <div style={{ marginLeft: '20%' }}>
-                {filteredCourses.map((course) => (
-                    <div key={course.id} style={{ border: '1px solid black', padding: '10px', marginBottom: '10px' }}>
-                        <h3>{course.courseName}</h3>
-                        <h4>{course.name}</h4>
-                        <p>{course.meetingTimes}</p>
+            <div style={{ marginLeft: '15%' }}>
+                {filteredCourses.map((course) => {
+                    const isInSchedule = schedule.some((c) => c.id === course.id);
+                    const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);
+                    const schedulingConflict = schedule.some((c) =>
+                          c.id !== course.id &&
+                          c.meetings.some((m) =>
+                            course.meetings.some((m2) =>
+                                 (new Date(m.start) < new Date(m2.end)) && (new Date(m2.start) < new Date(m.end))
+                              )
+                           )
+                    );                      
+                    return (
+                        <div key={course.id} style={{ border: '1px solid black', padding: '10px', marginBottom: '10px', minWidth: '600px', maxWidth: '100%' }}>
+                            <h3>{course.courseName}</h3>
+                            <h4>{course.name}</h4>
+                            <p>{course.meetingTimes}</p>
 
-                        {schedule.find((c) => c.id === course.id) ? (
-                            <button
-                                onClick={() =>
-                                    confirm('Remove from schedule?') &&
-                                    removeCourse(course.courseCode)
-                                }
-                            >
-                                Remove from Schedule
-                            </button>
-                        ) : (
-                            <button onClick={() => addCourse(course)}>
-                                Add to Schedule
-                            </button>
-                        )}
-                    </div>
-                ))}
+                            {isInSchedule && !diffSectionInSchedule ? (
+                                <button
+                                    onClick={() =>
+                                        confirm('Remove from schedule?') &&
+                                        removeCourseById(course.id)
+                                    }
+                                >
+                                    Remove from Schedule
+                                </button>
+                            ) : diffSectionInSchedule && isInSchedule ? (
+                                <button
+                                    onClick={() =>
+                                        confirm('Remove this section from schedule?') &&
+                                        removeCourseById(course.id)
+                                    }
+                                >
+                                    Remove from Schedule
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
+                                            if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
+                                                addCourse(course);
+                                                // setSeenInstr(true);
+                                            }
+                                        } else {
+                                            addCourse(course);
+                                        }
+                                    }}
+                                >
+                                    Add to Schedule
+                                </button>
+                            )}
+                            
+                            {diffSectionInSchedule && (
+                                <p>Another section of this course is already in your schedule</p>
+                            )}
+                            {schedulingConflict && (
+                                <p>There is a scheduling conflict with another course in your schedule</p>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

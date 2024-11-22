@@ -10,15 +10,30 @@ export const ScheduleProvider = ({ children }) => {
             setSchedule([...schedule, course]);
         }
     };
+
+    const addCourseById = (courseId) => {
+        const course = schedule.find((c) => c.id === courseId);
+        setSchedule([...schedule, course]);
+    };
+
     // perhaps make it based on title property?
-    const removeCourse = (courseCode) => {
+    const removeCourseByCourseCode = (courseCode) => {
         console.log("removeCourse", courseCode);
         setSchedule((prev) => prev.filter((course) => course.courseCode !== courseCode));
     };
 
+    const removeCourseById = (courseId) => {
+        console.log("removeCourseByID", courseId);
+        setSchedule((prev) => prev.filter((course) => course.id !== courseId));
+    };
+
+    const removeCourseByTitle = (title) => {
+        console.log("removeCourseByTitle", title);
+        setSchedule((prev) => prev.filter((course) => course.name !== title));
+    };
 
     return (
-        <ScheduleContext.Provider value={{ schedule, addCourse, removeCourse }}>
+        <ScheduleContext.Provider value={{ schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle }}>
             {children}
         </ScheduleContext.Provider>
     );
