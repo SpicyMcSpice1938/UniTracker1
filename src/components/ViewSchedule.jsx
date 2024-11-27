@@ -4,7 +4,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 
 const ViewSchedule = () => {
-    const {schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle } = useSchedule();
+    const { schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle } = useSchedule();
     const navigate = useNavigate();
 
     // Transform schedule into events for FullCalendar
@@ -41,19 +41,20 @@ const ViewSchedule = () => {
             }
         }
     }
-    console.log('repeatedCourses: ',repeatedCoursesBool);
+    console.log('repeatedCourses: ', repeatedCoursesBool);
     if (repeatedCoursesBool) {
-        console.log('repeatedCoursesArr: ',repeatedCoursesArr);
-    }  
+        console.log('repeatedCoursesArr: ', repeatedCoursesArr);
+    }
 
     return (
         <>
             <button onClick={() => navigate('/')}>Back</button>
             <button onClick={() => navigate('/scheduler')}>Go to Scheduler</button>
-            <div style={{ height: '80vh' }}>
+            <div>
                 <FullCalendar
                     plugins={[timeGridPlugin]}
                     initialView="timeGridWeek"
+                    hiddenDays={[0, 6]}
                     events={events}
                     eventClick={(info) => {
                         // const courseCode = info.event.title.split('-')[0].trim();
@@ -72,7 +73,6 @@ const ViewSchedule = () => {
                     allDaySlot={false} // Removes all-day section
                     slotMinTime="07:00:00" // 7 AM start
                     slotMaxTime="22:00:00" // 10 PM end
-                    height="100%"
                     contentHeight="auto"
                     dayHeaderFormat={{ weekday: 'long' }} // Show only day names
                     validRange={{
@@ -82,13 +82,13 @@ const ViewSchedule = () => {
                 />
                 <button
                     onClick={() => navigate('/thank-you')}
-                    disabled={events.length === 0}
+                    disabled={events.length === 0 || overlap || repeatedCoursesBool}
                     style={{ backgroundColor: events.length === 0 ? 'grey' : 'initial' }}
                 >
                     Finalize Schedule
                 </button>
             </div>
-        
+
         </>
 
     );
