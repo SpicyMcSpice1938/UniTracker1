@@ -72,13 +72,6 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                     end: new Date('2024-11-17')
                 }}
             />
-            <button
-                onClick={() => navigate('/thank-you')}
-                disabled={events.length === 0 || overlap || repeatedCoursesBool}
-                style={{ backgroundColor: events.length === 0 ? 'grey' : 'initial' }}
-            >
-                Finalize Schedule
-            </button>
         </ReactModal>
     );
 };

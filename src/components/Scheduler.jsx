@@ -70,11 +70,20 @@ const Scheduler = () => {
                         onChange={(e) => setFilter(e.target.value)}
                     />
                 </div>
-                {schedule.length > 0 && (
-                    <button onClick={() => setIsModalOpen(true)}>
-                        Calendar View
+                <div style={{ marginTop: 'auto' }}>
+                    {schedule.length > 0 && (
+                        <button onClick={() => setIsModalOpen(true)} style={{ display: 'block', width: '100%', marginBottom: '10px' }}>
+                            Calendar View
+                        </button>
+                    )}
+                    <button
+                        onClick={() => alert('Schedule finalized!')}
+                        disabled={overlap || schedule.length === 0 || repeatedCoursesBool}
+                        style={{ display: 'block', width: '100%' }}
+                    >
+                        Finalize Schedule
                     </button>
-                )}
+                </div>
             </div>
             <div style={{ marginLeft: '15%', padding: '10px' }}>
                 {filteredCourses.map((course) => {
