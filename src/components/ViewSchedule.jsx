@@ -1,26 +1,26 @@
+import ReactModal from 'react-modal';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
+import { CloseButton } from '@mantine/core';
 
-const ViewSchedule = () => {
-    const { schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle } = useSchedule();
+ReactModal.setAppElement('#root');
+
+const ViewSchedule = ({ isOpen, onRequestClose }) => {
+    const { schedule, removeCourseByTitle } = useSchedule();
     const navigate = useNavigate();
-
-    // Transform schedule into events for FullCalendar
 
     const events = schedule.flatMap((course) =>
         course.meetings.map((meeting, index) => ({
-            id: `${course.id}-${index}`, // Unique ID
+            id: `${course.id}-${index}`,
             title: course.name,
             start: meeting.start,
             end: meeting.end,
         }))
     );
 
-    // boolean for overlapping meetings
     let overlap = false;
-    // check if there are overlapping meetings
     for (let i = 0; i < events.length; i++) {
         for (let j = i + 1; j < events.length; j++) {
             if (events[i].start < events[j].end && events[i].end > events[j].start) {
@@ -29,10 +29,9 @@ const ViewSchedule = () => {
             }
         }
     }
-    console.log("overlap: ", overlap);
+
     let repeatedCoursesBool = false;
     let repeatedCoursesArr = [];
-    // check if there are repeated courses in the schedule, that is courseCode matches but sectionCode is different
     for (let i = 0; i < schedule.length; i++) {
         for (let j = i + 1; j < schedule.length; j++) {
             if (schedule[i].courseCode === schedule[j].courseCode) {
@@ -41,56 +40,46 @@ const ViewSchedule = () => {
             }
         }
     }
-    console.log('repeatedCourses: ', repeatedCoursesBool);
-    if (repeatedCoursesBool) {
-        console.log('repeatedCoursesArr: ', repeatedCoursesArr);
-    }
 
     return (
-        <>
-            <button onClick={() => navigate('/')}>Back</button>
-            <button onClick={() => navigate('/scheduler')}>Go to Scheduler</button>
-            <div>
-                <FullCalendar
-                    plugins={[timeGridPlugin]}
-                    initialView="timeGridWeek"
-                    hiddenDays={[0, 6]}
-                    events={events}
-                    eventClick={(info) => {
-                        // const courseCode = info.event.title.split('-')[0].trim();
-                        console.log(info.event);
-                        if (confirm(`Remove course ${info.event.title} and all its meetings?`)) {
-                            // removeCourseByCourseCode(courseCode); // Remove the entire course
-                            removeCourseByTitle(info.event.title);
-                            console.log("course title: ", info.event.title);
-                        }
-                    }}
-                    headerToolbar={{
-                        left: '',
-                        center: '',
-                        right: ''
-                    }} // Removes navigation buttons
-                    allDaySlot={false} // Removes all-day section
-                    slotMinTime="07:00:00" // 7 AM start
-                    slotMaxTime="22:00:00" // 10 PM end
-                    contentHeight="auto"
-                    dayHeaderFormat={{ weekday: 'long' }} // Show only day names
-                    validRange={{
-                        start: new Date('2024-11-10'),
-                        end: new Date('2024-11-17')
-                    }}
-                />
-                <button
-                    onClick={() => navigate('/thank-you')}
-                    disabled={events.length === 0 || overlap || repeatedCoursesBool}
-                    style={{ backgroundColor: events.length === 0 ? 'grey' : 'initial' }}
-                >
-                    Finalize Schedule
-                </button>
+        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '80%', height: '80%', margin: 'auto', position: 'relative' } }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Click on a meeting to remove a section from the schedule</span>
+                <CloseButton onClick={onRequestClose} size='lg' />
             </div>
-
-        </>
-
+            <FullCalendar
+                plugins={[timeGridPlugin]}
+                initialView="timeGridWeek"
+                hiddenDays={[0, 6]}
+                events={events}
+                eventClick={(info) => {
+                    if (confirm(`Remove course ${info.event.title} and all its meetings?`)) {
+                        removeCourseByTitle(info.event.title);
+                    }
+                }}
+                headerToolbar={{
+                    left: '',
+                    center: '',
+                    right: ''
+                }}
+                allDaySlot={false}
+                slotMinTime="07:00:00"
+                slotMaxTime="22:00:00"
+                contentHeight="auto"
+                dayHeaderFormat={{ weekday: 'long' }}
+                validRange={{
+                    start: new Date('2024-11-10'),
+                    end: new Date('2024-11-17')
+                }}
+            />
+            <button
+                onClick={() => navigate('/thank-you')}
+                disabled={events.length === 0 || overlap || repeatedCoursesBool}
+                style={{ backgroundColor: events.length === 0 ? 'grey' : 'initial' }}
+            >
+                Finalize Schedule
+            </button>
+        </ReactModal>
     );
 };
 
