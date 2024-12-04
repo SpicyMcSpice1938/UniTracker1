@@ -62,13 +62,7 @@ const Scheduler = () => {
             <div style={{ width: '15%', position: 'fixed', height: '100vh', borderRight: '1px solid black', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                     <button onClick={() => navigate('/')}>Go Back</button>
-                    <br />
-                    <input
-                        type="text"
-                        placeholder="Filter courses..."
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                    />
+                    
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                     {schedule.length > 0 && (
@@ -86,6 +80,12 @@ const Scheduler = () => {
                 </div>
             </div>
             <div style={{ marginLeft: '15%', padding: '10px' }}>
+                <input
+                        type="text"
+                        placeholder="Filter courses..."
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                    />
                 {filteredCourses.map((course) => {
                     const isInSchedule = schedule.some((c) => c.id === course.id);
                     const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);

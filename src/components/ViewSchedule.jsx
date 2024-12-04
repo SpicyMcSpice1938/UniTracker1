@@ -72,6 +72,10 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                     end: new Date('2024-11-17')
                 }}
             />
+            <button
+                className='fixed bottom-12 right-12'
+                onClick={() => alert('Schedule finalized!')}
+            >Finalize Schedule</button>
         </ReactModal>
     );
 };
