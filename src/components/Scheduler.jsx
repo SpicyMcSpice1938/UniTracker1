@@ -5,6 +5,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 import ViewSchedule from './ViewSchedule';
 import courseData from '../courseData';
+import { TextInput } from '@mantine/core';
 
 
 const Scheduler = () => {
@@ -15,7 +16,9 @@ const Scheduler = () => {
     const [seenInstr, setSeenInstr] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const filteredCourses = courses.filter((course) =>
-        course.name.toLowerCase().includes(filter.toLowerCase())
+        course.name.toLowerCase().includes(filter.toLowerCase()) ||
+        course.courseName.toLowerCase().includes(filter.toLowerCase())
+
     );
 
 
@@ -62,7 +65,7 @@ const Scheduler = () => {
             <div style={{ width: '15%', position: 'fixed', height: '100vh', borderRight: '1px solid black', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                     <button onClick={() => navigate('/')}>Go Back</button>
-                    
+
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                     {schedule.length > 0 && (
@@ -80,12 +83,19 @@ const Scheduler = () => {
                 </div>
             </div>
             <div style={{ marginLeft: '15%', padding: '10px' }}>
-                <input
-                        type="text"
-                        placeholder="Filter courses..."
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                    />
+                {/* <input
+                    type="text"
+                    placeholder="Filter courses..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                /> */}
+
+                <TextInput
+                    placeholder="Filter courses..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    style={{ width: '100%', marginBottom: '10px' }}
+                />
                 {filteredCourses.map((course) => {
                     const isInSchedule = schedule.some((c) => c.id === course.id);
                     const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);
