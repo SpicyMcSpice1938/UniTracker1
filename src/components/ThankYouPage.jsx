@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Title, Button } from '@mantine/core';
+import DisplaySchedule from './DisplaySchedule';
 
 const ThankYouPage = () => {
     const navigate = useNavigate();
@@ -7,6 +8,7 @@ const ThankYouPage = () => {
     return (
         <div align="center">
             <Title order={1} c="ut-purple.6" mt="5rem" mb="4rem">Thank you for finalizing your schedule!</Title>
+            <DisplaySchedule/>
             <Button 
                 onClick={() => navigate('/')}
                 color="cyan.4" 

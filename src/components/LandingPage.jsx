@@ -1,6 +1,7 @@
 import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 import { Title, Button, Card, Text, Group } from '@mantine/core';
+import DisplaySchedule from './DisplaySchedule';
 
 const LandingPage = () => {
     const { schedule } = useSchedule();
@@ -13,30 +14,7 @@ const LandingPage = () => {
             </Title>
 
             {/* Display the schedule cards if available */}
-            {schedule.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    {schedule.map((course) => (
-                        <Card
-                            key={course.id}
-                            shadow="sm"
-                            padding="lg"
-                            style={{ margin: '10px', width: '300px' }}
-                        >
-                            <Title order={3}>{course.name}</Title>
-                            <Text size="sm" color="dimmed">
-                                {course.courseCode}
-                            </Text>
-                            <Group direction="column" spacing={4} mt="sm">
-                                {course.meetings.map((meeting, index) => (
-                                    <Text key={index} size="sm">
-                                        {meeting.start} - {meeting.end}
-                                    </Text>
-                                ))}
-                            </Group>
-                        </Card>
-                    ))}
-                </div>
-            )}
+            <DisplaySchedule/>
 
             {/* Show the "Start Scheduling" button if no schedule is finalized */}
             <Button
