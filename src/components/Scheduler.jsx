@@ -101,6 +101,10 @@ const Scheduler = () => {
                             )
                         )
                     );
+                    // recs: mantine card. idk if drop shadow would be cool.
+                    // button to add if there's no conflict neutral-to-dark blue text+border. i think mantine props are variant=outline, color, (gradient, radius, size might be cool).
+                    // if there's a conflict, dark red text+border button to remove from schedule? idk honestly. check how these work for contrast ratio in tota11y
+                    // the text that tells if there is a conflict should be dark red. i think that should cover the contrast ratio.
                     return (
                         <div key={course.id} style={{ border: '1px solid black', padding: '10px', marginBottom: '10px', minWidth: '600px', maxWidth: '100%' }}>
                             <h3>{course.courseName}</h3>
