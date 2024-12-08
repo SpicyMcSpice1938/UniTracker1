@@ -46,17 +46,22 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
     console.log(repeatedCoursesArr);
     console.log(overlappingEvents);
 
-    const eventContent = (eventInfo) => {
-        const isOverlapping = overlappingEvents.has(eventInfo.event.id);
-        const isRepeatedCourse = repeatedCoursesArr.includes(eventInfo.event.title.split('-')[0].trim());
+    // Add custom attributes to events
+    const coloredEvents = events.map(event => {
+        const isOverlapping = overlappingEvents.has(event.id);
+        const isRepeatedCourse = repeatedCoursesArr.includes(event.title.split('-')[0].trim());
+        return {
+            ...event,
+            backgroundColor: isOverlapping || isRepeatedCourse ? 'tomato' : 'dodgerblue',
+            borderColor: isOverlapping || isRepeatedCourse ? 'black' : 'transparent'
+        };
+    });
 
+    const eventContent = (eventInfo) => {
+        const { backgroundColor, borderColor } = eventInfo.event.extendedProps;
         return (
-            <div
-                style={{
-                    backgroundColor: isOverlapping || isRepeatedCourse ? 'darkblue' : 'transparent',
-                }}
-            >
-                {eventInfo.event.title}
+            <div style={{ backgroundColor, borderColor, borderStyle: 'solid' }}>
+                <p>{eventInfo.event.title}</p>
             </div>
         );
     };
@@ -73,7 +78,7 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                         plugins={[timeGridPlugin]}
                         initialView="timeGridWeek"
                         hiddenDays={[0, 6]}
-                        events={events}
+                        events={coloredEvents}
                         eventContent={eventContent}
                         eventClick={(info) => {
                             if (confirm(`Remove course ${info.event.title} and all its meetings?`)) {
