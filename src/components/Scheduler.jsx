@@ -5,23 +5,20 @@ import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 import ViewSchedule from './ViewSchedule';
 import courseData from '../courseData';
-import { TextInput } from '@mantine/core';
-
+import { TextInput, Tooltip } from '@mantine/core';
 
 const Scheduler = () => {
     const navigate = useNavigate();
-    const { schedule, addCourse, removeCourseByCourseCode, addCourseById, removeCourseById, removeCourseByTitle } = useSchedule();
+    const { schedule, addCourse, removeCourseById } = useSchedule();
     const [filter, setFilter] = useState('');
     const [courses, setCourses] = useState(courseData);
     const [seenInstr, setSeenInstr] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const filteredCourses = courses.filter((course) =>
         course.name.toLowerCase().includes(filter.toLowerCase()) ||
         course.courseName.toLowerCase().includes(filter.toLowerCase())
-
     );
-
-
 
     const events = schedule.flatMap((course) =>
         course.meetings.map((meeting, index) => ({
@@ -33,11 +30,13 @@ const Scheduler = () => {
     );
 
     let overlap = false;
+    let overlappingEvents = new Set();
     for (let i = 0; i < events.length; i++) {
         for (let j = i + 1; j < events.length; j++) {
             if (events[i].start < events[j].end && events[i].end > events[j].start) {
                 overlap = true;
-                break;
+                overlappingEvents.add(events[i].id);
+                overlappingEvents.add(events[j].id);
             }
         }
     }
@@ -53,19 +52,13 @@ const Scheduler = () => {
         }
     }
 
-    let repeatedCourseSet = new Set(repeatedCoursesArr);
-
-    console.log(repeatedCourseSet);
-    console.log(overlap);
-
-
+    const isFinalizeDisabled = overlap || repeatedCoursesBool;
 
     return (
         <div style={{ display: 'flex' }}>
             <div style={{ width: '15%', position: 'fixed', height: '100vh', borderRight: '1px solid black', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                     <button onClick={() => navigate('/')}>Go Back</button>
-
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                     {schedule.length > 0 && (
@@ -73,23 +66,23 @@ const Scheduler = () => {
                             Calendar View
                         </button>
                     )}
-                    <button
-                        onClick={() => alert('Schedule finalized!')}
-                        disabled={overlap || schedule.length === 0 || repeatedCoursesBool}
-                        style={{ display: 'block', width: '100%' }}
+                    <Tooltip
+                        label="Please resolve all scheduling conflicts and remove repeated courses before finalizing"
+                        disabled={!isFinalizeDisabled}
+                        position="top"
+                        withArrow
                     >
-                        Finalize Schedule
-                    </button>
+                        <button
+                            onClick={() => alert('Schedule finalized!')}
+                            disabled={isFinalizeDisabled}
+                            style={{ display: 'block', width: '100%' }}
+                        >
+                            Finalize Schedule
+                        </button>
+                    </Tooltip>
                 </div>
             </div>
             <div style={{ marginLeft: '15%', padding: '10px' }}>
-                {/* <input
-                    type="text"
-                    placeholder="Filter courses..."
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                /> */}
-
                 <TextInput
                     placeholder="Filter courses..."
                     value={filter}

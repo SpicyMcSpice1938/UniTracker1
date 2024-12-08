@@ -21,11 +21,13 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
     );
 
     let overlap = false;
+    let overlappingEvents = new Set();
     for (let i = 0; i < events.length; i++) {
         for (let j = i + 1; j < events.length; j++) {
             if (events[i].start < events[j].end && events[i].end > events[j].start) {
                 overlap = true;
-                break;
+                overlappingEvents.add(events[i].id);
+                overlappingEvents.add(events[j].id);
             }
         }
     }
@@ -41,41 +43,64 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
         }
     }
 
-    return (
-        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '80%', height: '80%', margin: 'auto', position: 'relative' } }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Click on a meeting to remove a section from the schedule</span>
-                <CloseButton onClick={onRequestClose} size='lg' />
+    console.log(repeatedCoursesArr);
+    console.log(overlappingEvents);
+
+    const eventContent = (eventInfo) => {
+        const isOverlapping = overlappingEvents.has(eventInfo.event.id);
+        const isRepeatedCourse = repeatedCoursesArr.includes(eventInfo.event.title.split('-')[0].trim());
+
+        return (
+            <div
+                style={{
+                    backgroundColor: isOverlapping || isRepeatedCourse ? 'darkblue' : 'transparent',
+                }}
+            >
+                {eventInfo.event.title}
             </div>
-            <FullCalendar
-                plugins={[timeGridPlugin]}
-                initialView="timeGridWeek"
-                hiddenDays={[0, 6]}
-                events={events}
-                eventClick={(info) => {
-                    if (confirm(`Remove course ${info.event.title} and all its meetings?`)) {
-                        removeCourseByTitle(info.event.title);
-                    }
-                }}
-                headerToolbar={{
-                    left: '',
-                    center: '',
-                    right: ''
-                }}
-                allDaySlot={false}
-                slotMinTime="07:00:00"
-                slotMaxTime="22:00:00"
-                contentHeight="auto"
-                dayHeaderFormat={{ weekday: 'long' }}
-                validRange={{
-                    start: new Date('2024-11-10'),
-                    end: new Date('2024-11-17')
-                }}
-            />
-            <button
-                className='fixed bottom-12 right-12'
-                onClick={() => alert('Schedule finalized!')}
-            >Finalize Schedule</button>
+        );
+    };
+
+    return (
+        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '80%', height: '100%', margin: 'auto', position: 'relative' } }}>
+            <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Click on a meeting to remove a section from the schedule</span>
+                    <CloseButton onClick={onRequestClose} size='lg' />
+                </div>
+                <div className='calendar-container' style={{ height: '50%', overflowY: 'auto', overflowX: 'auto' }}>
+                    <FullCalendar
+                        plugins={[timeGridPlugin]}
+                        initialView="timeGridWeek"
+                        hiddenDays={[0, 6]}
+                        events={events}
+                        eventContent={eventContent}
+                        eventClick={(info) => {
+                            if (confirm(`Remove course ${info.event.title} and all its meetings?`)) {
+                                removeCourseByTitle(info.event.title);
+                            }
+                        }}
+                        headerToolbar={{
+                            left: '',
+                            center: '',
+                            right: ''
+                        }}
+                        allDaySlot={false}
+                        slotMinTime="07:00:00"
+                        slotMaxTime="22:00:00"
+                        contentHeight="auto"
+                        dayHeaderFormat={{ weekday: 'long' }}
+                        validRange={{
+                            start: new Date('2024-11-10'),
+                            end: new Date('2024-11-17')
+                        }}
+                    />
+                </div>
+                <button
+                    className='fixed bottom-12 right-12'
+                    onClick={() => alert('Schedule finalized!')}
+                >Finalize Schedule</button>
+            </div>
         </ReactModal>
     );
 };
