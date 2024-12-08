@@ -73,12 +73,13 @@ const Scheduler = () => {
                         withArrow
                     >
                         <button
-                            onClick={() => alert('Schedule finalized!')}
+                            onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
                             disabled={isFinalizeDisabled}
                             style={{ display: 'block', width: '100%' }}
                         >
                             Finalize Schedule
                         </button>
+
                     </Tooltip>
                 </div>
             </div>
