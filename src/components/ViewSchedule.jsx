@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
-import { CloseButton } from '@mantine/core';
+import { CloseButton, Button, Tooltip } from '@mantine/core';
 
 ReactModal.setAppElement('#root');
 
@@ -45,7 +45,7 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
 
     console.log(repeatedCoursesArr);
     console.log(overlappingEvents);
-
+    const isFinalizeDisabled = overlap || repeatedCoursesBool;
     // Add custom attributes to events
     const coloredEvents = events.map(event => {
         const isOverlapping = overlappingEvents.has(event.id);
@@ -73,6 +73,22 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                     <span>Click on a meeting to remove a section from the schedule</span>
                     <CloseButton onClick={onRequestClose} size='lg' />
                 </div>
+                <Tooltip
+                    label="Please resolve all scheduling conflicts and remove repeated courses before finalizing"
+                    disabled={!isFinalizeDisabled}
+                    position="top"
+                    withArrow
+                >
+                    <button
+                        onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
+                        disabled={isFinalizeDisabled}
+                        style={{ display: 'block', width: '100%' }}
+                    >
+                        Finalize Schedule
+                    </button>
+
+                </Tooltip>
+
                 <div className='calendar-container' style={{ height: '50%', overflowY: 'auto', overflowX: 'auto' }}>
                     <FullCalendar
                         plugins={[timeGridPlugin]}
@@ -102,13 +118,6 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                     />
                 </div>
                 {/* TODO button needs to be blocked in the modal view too. like how it is in Scheduler */}
-                <button
-                    className='fixed bottom-12 right-12'
-                    onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
-                >
-                    Finalize Schedule
-                </button>
-
             </div>
         </ReactModal>
     );
