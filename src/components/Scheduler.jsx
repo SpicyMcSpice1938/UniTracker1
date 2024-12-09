@@ -5,7 +5,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 import ViewSchedule from './ViewSchedule';
 import courseData from '../courseData';
-import { TextInput, Tooltip } from '@mantine/core';
+import { TextInput, Tooltip, Card, Button, Text } from '@mantine/core';
 
 const Scheduler = () => {
     const navigate = useNavigate();
@@ -106,52 +106,49 @@ const Scheduler = () => {
                     // if there's a conflict, dark red text+border button to remove from schedule? idk honestly. check how these work for contrast ratio in tota11y
                     // the text that tells if there is a conflict should be dark red. i think that should cover the contrast ratio.
                     return (
-                        <div key={course.id} style={{ border: '1px solid black', padding: '10px', marginBottom: '10px', minWidth: '600px', maxWidth: '100%' }}>
-                            <h3>{course.courseName}</h3>
-                            <h4>{course.name}</h4>
-                            <p>{course.meetingTimes}</p>
+                        <div key={course.id} style={{ marginBottom: '10px', minWidth: '600px', maxWidth: '100%' }}>
+                            <Card shadow="sm" padding="lg" radius="md" withBorder>
+                                <h3>{course.courseName}</h3>
+                                <h4>{course.name}</h4>
+                                <p>{course.meetingTimes}</p>
 
-                            {isInSchedule && !diffSectionInSchedule ? (
-                                <button
-                                    onClick={() =>
-                                        confirm('Remove from schedule?') &&
-                                        removeCourseById(course.id)
-                                    }
-                                >
-                                    Remove from Schedule
-                                </button>
-                            ) : diffSectionInSchedule && isInSchedule ? (
-                                <button
-                                    onClick={() =>
-                                        confirm('Remove this section from schedule?') &&
-                                        removeCourseById(course.id)
-                                    }
-                                >
-                                    Remove from Schedule
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => {
-                                        if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
-                                            if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
-                                                addCourse(course);
-                                                // setSeenInstr(true);
-                                            }
-                                        } else {
-                                            addCourse(course);
+                                {isInSchedule ? (
+                                    <Button
+                                        variant="outline"
+                                        color="red"
+                                        onClick={() =>
+                                            confirm('Remove from schedule?') &&
+                                            removeCourseById(course.id)
                                         }
-                                    }}
-                                >
-                                    Add to Schedule
-                                </button>
-                            )}
+                                    >
+                                        Remove from Schedule
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="outline"
+                                        color="blue"
+                                        onClick={() => {
+                                            if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
+                                                if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
+                                                    addCourse(course);
+                                                    // setSeenInstr(true);
+                                                }
+                                            } else {
+                                                addCourse(course);
+                                            }
+                                        }}
+                                    >
+                                        Add to Schedule
+                                    </Button>
+                                )}
 
-                            {diffSectionInSchedule && (
-                                <p>Another section of this course is already in your schedule</p>
-                            )}
-                            {schedulingConflict && (
-                                <p>There is a scheduling conflict with another course in your schedule</p>
-                            )}
+                                {diffSectionInSchedule && (
+                                    <Text>Another section of this course is already in your schedule</Text>
+                                )}
+                                {schedulingConflict && (
+                                    <Text>There is a scheduling conflict with another course in your schedule</Text>
+                                )}
+                            </Card>
                         </div>
                     );
                 })}

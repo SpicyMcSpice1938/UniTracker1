@@ -101,13 +101,13 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
                         }}
                     />
                 </div>
-                {/* button needs to be blocked in the modal view too. like how it is in Scheduler */}
+                {/* TODO button needs to be blocked in the modal view too. like how it is in Scheduler */}
                 <button
-                        className='fixed bottom-12 right-12'
-                        onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
-                    >
-                        Finalize Schedule
-                    </button>
+                    className='fixed bottom-12 right-12'
+                    onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
+                >
+                    Finalize Schedule
+                </button>
 
             </div>
         </ReactModal>
