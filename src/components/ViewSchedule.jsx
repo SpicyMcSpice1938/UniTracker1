@@ -54,13 +54,14 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
             ...event,
             backgroundColor: isOverlapping || isRepeatedCourse ? 'tomato' : "#a7aef3",
             borderColor: isOverlapping || isRepeatedCourse ? 'black' : 'transparent',
+            borderWidth: isOverlapping || isRepeatedCourse ? '1px' : '0px',
         };
     });
 
     const eventContent = (eventInfo) => {
-        const { backgroundColor, borderColor } = eventInfo.event.extendedProps;
+        const { backgroundColor, borderColor, borderWidth } = eventInfo.event.extendedProps;
         return (
-            <div style={{ backgroundColor, borderColor, borderStyle: 'solid' }}>
+            <div style={{ backgroundColor, borderColor, borderWidth, borderStyle: 'solid' }}>
                 <p>{eventInfo.event.title}</p>
             </div>
         );
