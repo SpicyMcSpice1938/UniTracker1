@@ -60,7 +60,7 @@ const Scheduler = () => {
 
                 <Grid mt="0.75rem" grow>
                     <Grid.Col span={"auto"}></Grid.Col>
-                    <Grid.Col span={{ base: 12, md: 10 }}>    
+                    <Grid.Col span={{ base: 12, md: 10 }}>
                         <Button variant="outline" w="100%" c="ut-purple.4" onClick={() => navigate('/')}>Go Back</Button>
                     </Grid.Col>
                     <Grid.Col span={"auto"}></Grid.Col>
@@ -70,13 +70,13 @@ const Scheduler = () => {
                     {schedule.length > 0 && (
                         <Grid mb="0.5rem" grow>
                             <Grid.Col span={"auto"}></Grid.Col>
-                            <Grid.Col span={{ base: 12, md: 10 }}>    
+                            <Grid.Col span={{ base: 12, md: 10 }}>
                                 <Button onClick={() => setIsModalOpen(!isModalOpen)} w="100%">
-                                {!isModalOpen ? (
-                                    "Calendar View"
-                                ) : (
-                                    "List View"
-                                )}
+                                    {!isModalOpen ? (
+                                        "Calendar View"
+                                    ) : (
+                                        "List View"
+                                    )}
                                 </Button>
                             </Grid.Col>
                             <Grid.Col span={"auto"}></Grid.Col>
@@ -90,18 +90,18 @@ const Scheduler = () => {
                     >
                         <Grid mb="0.25rem" grow>
                             <Grid.Col span={"auto"}></Grid.Col>
-                            <Grid.Col span={{ base: 12, md: 10 }}>    
+                            <Grid.Col span={{ base: 12, md: 10 }}>
                                 <Button
                                     onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
                                     disabled={isFinalizeDisabled}
                                     style={{ display: 'block', width: '100%' }}
                                 >
                                     Finalize
-                                </Button>                            
+                                </Button>
                             </Grid.Col>
                             <Grid.Col span={"auto"}></Grid.Col>
                         </Grid>
-                        
+
 
                     </Tooltip>
                 </div>
@@ -113,79 +113,76 @@ const Scheduler = () => {
                     placeholder="Filter courses..."
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
-                    style={{ width: '100%', marginBottom: '10px' }}
+                    style={{ width: '50%', marginBottom: '10px' }}
                     aria-label='Filter courses'
                 />
 
                 <Grid>
-                {filteredCourses.map((course) => {
-                    const isInSchedule = schedule.some((c) => c.id === course.id);
-                    const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);
-                    const schedulingConflict = schedule.some((c) =>
-                        c.id !== course.id &&
-                        c.meetings.some((m) =>
-                            course.meetings.some((m2) =>
-                                (new Date(m.start) < new Date(m2.end)) && (new Date(m2.start) < new Date(m.end))
+                    {filteredCourses.map((course) => {
+                        const isInSchedule = schedule.some((c) => c.id === course.id);
+                        const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);
+                        const schedulingConflict = schedule.some((c) =>
+                            c.id !== course.id &&
+                            c.meetings.some((m) =>
+                                course.meetings.some((m2) =>
+                                    (new Date(m.start) < new Date(m2.end)) && (new Date(m2.start) < new Date(m.end))
+                                )
                             )
-                        )
-                    );
-                    // recs: mantine card. idk if drop shadow would be cool.
-                    // button to add if there's no conflict neutral-to-dark blue text+border. i think mantine props are variant=outline, color, (gradient, radius, size might be cool).
-                    // if there's a conflict, dark red text+border button to remove from schedule? idk honestly. check how these work for contrast ratio in tota11y
-                    // the text that tells if there is a conflict should be dark red. i think that should cover the contrast ratio.
-                    return (
-                        <Grid.Col key={course.id} span={{ base: 12, md: 6, lg: 4 }}>
-                            <Card minWidth="600px" maxWidth="100%" shadow="md" padding={"1rem"} radius="md" withBorder>
-                                <Card.Section p="md" px="2rem">
-                                    <Title order={2} size={"1.5rem"}>{course.courseName}</Title>
-                                    <Title order={3} size="1.1rem" fs="italic" fw="lighter">{course.name}</Title>
-                                    <Text>{course.meetingTimes}</Text>
-                                </Card.Section>
+                        );
 
-                                <Card.Section p="md" px="2rem">
-                                {isInSchedule ? (
-                                    <Button
-                                        variant="outline"
-                                        color="red.9"
-                                        w="100%"
-                                        onClick={() =>
-                                            confirm('Remove from schedule?') &&
-                                            removeCourseById(course.id)
-                                        }
-                                    >
-                                        Remove from Schedule
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="filled"
-                                        color="violet.6"
-                                        w="100%"
-                                        onClick={() => {
-                                            if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
-                                                if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
-                                                    addCourse(course);
-                                                    // setSeenInstr(true);
+                        return (
+                            <Grid.Col key={course.id} span={{ base: 12, md: 6, lg: 4 }}>
+                                <Card minWidth="600px" maxWidth="100%" shadow="md" padding={"1rem"} radius="md" withBorder>
+                                    <Card.Section p="md" px="2rem">
+                                        <Title order={2} size={"1.5rem"}>{course.courseName}</Title>
+                                        <Title order={3} size="1.1rem" fs="italic" fw="lighter">{course.name}</Title>
+                                        <Text>{course.meetingTimes}</Text>
+                                    </Card.Section>
+
+                                    <Card.Section p="md" px="2rem">
+                                        {isInSchedule ? (
+                                            <Button
+                                                variant="outline"
+                                                color="red.9"
+                                                w="100%"
+                                                onClick={() =>
+                                                    confirm('Remove from schedule?') &&
+                                                    removeCourseById(course.id)
                                                 }
-                                            } else {
-                                                addCourse(course);
-                                            }
-                                        }}
-                                    >
-                                        Add to Schedule
-                                    </Button>
-                                )}
+                                            >
+                                                Remove from Schedule
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="filled"
+                                                color="violet.6"
+                                                w="100%"
+                                                onClick={() => {
+                                                    if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
+                                                        if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
+                                                            addCourse(course);
+                                                            // setSeenInstr(true);
+                                                        }
+                                                    } else {
+                                                        addCourse(course);
+                                                    }
+                                                }}
+                                            >
+                                                Add to Schedule
+                                            </Button>
+                                        )}
 
-                                {diffSectionInSchedule && (
-                                    <Text mt="sm" size="0.95rem" fw="bold">Another section of this course is already in your schedule</Text>
-                                )}
-                                {schedulingConflict && (
-                                    <Text mt="sm" size="0.95rem" c="red.8" fw="bold">There is a scheduling conflict with another course in your schedule</Text>
-                                )}
-                                </Card.Section>
-                            </Card>
-                        </Grid.Col>
-                    );
-                })}
+                                        {diffSectionInSchedule && (
+                                            <Text mt="sm" size="0.95rem" fw="bold">Another section of this course is already in your schedule</Text>
+                                        )}
+                                        {schedulingConflict && (
+                                            <Text mt="sm" size="0.95rem" c="red.8" fw="bold">There is a scheduling conflict with another course in your schedule</Text>
+                                        )}
+                                    </Card.Section>
+                                </Card>
+                            </Grid.Col>
+                        );
+                    })}
                 </Grid>
             </div>
             <ViewSchedule isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} />

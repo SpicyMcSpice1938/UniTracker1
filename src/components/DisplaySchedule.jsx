@@ -20,9 +20,9 @@ const DisplaySchedule = () => {
                             </Text>
                             <Group direction="column" justify='center' spacing={4} mt="sm">
                                 {/* Not sure if we want meeting times or the three seperate dates */}
-                                    <Text size="0.9rem">
-                                         {course.meetingTimes}
-                                    </Text>
+                                <Text size="0.9rem">
+                                    {course.meetingTimes}
+                                </Text>
                             </Group>
                         </Card>
                     </Grid.Col>
