@@ -54,7 +54,6 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
             ...event,
             backgroundColor: isOverlapping || isRepeatedCourse ? 'tomato' : "#a7aef3",
             borderColor: isOverlapping || isRepeatedCourse ? 'black' : 'transparent',
-            textColor: isOverlapping || isRepeatedCourse ? 'black' : 'black',
         };
     });
 
@@ -68,7 +67,7 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
     };
 
     return (
-        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '85%', height: '90%', margin: 'auto', marginLeft:"10%", position: 'relative' } }}>
+        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '85%', height: '90%', margin: 'auto', marginLeft: "10%", position: 'relative' } }}>
             <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>Click on a meeting to remove a section from the schedule</span>
@@ -109,4 +108,4 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
     );
 };
 
-export default ViewSchedule;
+export default ViewSchedule
