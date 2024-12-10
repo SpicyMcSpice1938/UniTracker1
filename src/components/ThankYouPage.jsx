@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { Title, Button } from '@mantine/core';
+import DisplaySchedule from './DisplaySchedule';
+import { Container } from 'postcss';
 
 const ThankYouPage = () => {
     const navigate = useNavigate();
 
     return (
-        <div align="center">
-            <Title order={1} c="ut-purple.6" mt="5rem" mb="4rem">Thank you for finalizing your schedule!</Title>
+        <div role="main" align="center">
+            <Title order={1} c="ut-purple.6" mt="7rem">Congratulations!</Title>
+            <Title order={2} c="ut-purple.4" mt="1rem" mb="2rem">Here is your new schedule:</Title>
+            <DisplaySchedule/>
             <Button 
                 onClick={() => navigate('/')}
                 color="cyan.4" 
