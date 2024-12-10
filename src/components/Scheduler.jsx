@@ -113,7 +113,7 @@ const Scheduler = () => {
                     placeholder="Filter courses..."
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
-                    style={{ width: '100%', marginBottom: '10px' }}
+                    style={{ width: '50%', marginBottom: '10px' }}
                     aria-label='Filter courses'
                 />
 
@@ -129,16 +129,13 @@ const Scheduler = () => {
                             )
                         )
                     );
-                    // recs: mantine card. idk if drop shadow would be cool.
-                    // button to add if there's no conflict neutral-to-dark blue text+border. i think mantine props are variant=outline, color, (gradient, radius, size might be cool).
-                    // if there's a conflict, dark red text+border button to remove from schedule? idk honestly. check how these work for contrast ratio in tota11y
-                    // the text that tells if there is a conflict should be dark red. i think that should cover the contrast ratio.
+
                     return (
                         <Grid.Col key={course.id} span={{ base: 12, md: 6, lg: 4 }}>
-                            <Card minWidth="600px" maxWidth="100%" shadow="md" padding={"1rem"} radius="md" withBorder>
+                            <Card minWidth="600px" maxWidth="100%" bg="indigo.1" shadow="md" padding={"1rem"} radius="md" withBorder>
                                 <Card.Section p="md" px="2rem">
-                                    <Title order={2} size={"1.5rem"}>{course.courseName}</Title>
-                                    <Title order={3} size="1.1rem" fs="italic" fw="lighter">{course.name}</Title>
+                                    <Title order={2} size={"1.7rem"} c="ut-purple.8" mb="0.5rem">{course.courseName}</Title>
+                                    <Title order={3} size="1.1rem" fs="italic" fw="normal" c="violet.7" mb="0.5rem">{course.name}</Title>
                                     <Text>{course.meetingTimes}</Text>
                                 </Card.Section>
 

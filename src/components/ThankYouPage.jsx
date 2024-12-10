@@ -8,7 +8,8 @@ const ThankYouPage = () => {
 
     return (
         <div role="main" align="center">
-            <Title order={1} c="ut-purple.6" mt="5rem" mb="4rem">Thank you for finalizing your schedule!</Title>
+            <Title order={1} c="ut-purple.6" mt="7rem">Congratulations!</Title>
+            <Title order={2} c="ut-purple.4" mt="1rem" mb="2rem">Here is your new schedule:</Title>
             <DisplaySchedule/>
             <Button 
                 onClick={() => navigate('/')}

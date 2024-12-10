@@ -7,23 +7,22 @@ const DisplaySchedule = () => {
     return (<>
         {/* Display the schedule cards if available */}
         {schedule.length > 0 && (
-            <Grid mx="25rem" mb="4rem" grow>
+            <Grid mx="20rem" mb="4rem" grow>
                 {schedule.map((course) => (
                     <Grid.Col span={4} key={course.id}>
-                        <Card
-                            shadow="sm"
-                            p="md"
+                        <Card 
+                            bg="indigo.1" 
+                            shadow="md"
                         >
-                            <Title order={1} size={"2rem"}>{course.name}</Title>
-                            <Text size="sm" c="cyan.8">
-                                {course.courseCode}
-                            </Text>
-                            <Group direction="column" justify='center' spacing={4} mt="sm">
-                                {/* Not sure if we want meeting times or the three seperate dates */}
-                                    <Text size="0.9rem">
-                                         {course.meetingTimes}
-                                    </Text>
-                            </Group>
+                            <Card.Section p="md" align='center'>
+                                <Title order={1} size={"1.7rem"} c="ut-purple.8" mb="0.3rem">{course.courseName}</Title>
+                                <Text size="1.2rem" c="violet.7" mb="0.5rem" fs="italic">
+                                    {course.name}
+                                </Text>
+                                <Text size="0.9rem">
+                                     {course.meetingTimes}
+                                </Text>
+                            </Card.Section>
                         </Card>
                     </Grid.Col>
                 ))}
