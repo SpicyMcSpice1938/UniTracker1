@@ -52,8 +52,9 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
         const isRepeatedCourse = repeatedCoursesArr.includes(event.title.split('-')[0].trim());
         return {
             ...event,
-            backgroundColor: isOverlapping || isRepeatedCourse ? 'tomato' : 'dodgerblue',
-            borderColor: isOverlapping || isRepeatedCourse ? 'black' : 'transparent'
+            backgroundColor: isOverlapping || isRepeatedCourse ? 'tomato' : "#a7aef3",
+            borderColor: isOverlapping || isRepeatedCourse ? 'black' : 'transparent',
+            textColor: isOverlapping || isRepeatedCourse ? 'black' : 'black',
         };
     });
 
@@ -67,27 +68,12 @@ const ViewSchedule = ({ isOpen, onRequestClose }) => {
     };
 
     return (
-        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '80%', height: '100%', margin: 'auto', position: 'relative' } }}>
+        <ReactModal isOpen={isOpen} onRequestClose={onRequestClose} style={{ content: { width: '85%', height: '90%', margin: 'auto', marginLeft:"10%", position: 'relative' } }}>
             <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>Click on a meeting to remove a section from the schedule</span>
                     <CloseButton onClick={onRequestClose} size='lg' />
                 </div>
-                <Tooltip
-                    label="Please resolve all scheduling conflicts and remove repeated courses before finalizing"
-                    disabled={!isFinalizeDisabled}
-                    position="top"
-                    withArrow
-                >
-                    <button
-                        onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
-                        disabled={isFinalizeDisabled}
-                        style={{ display: 'block', width: '100%' }}
-                    >
-                        Finalize Schedule
-                    </button>
-
-                </Tooltip>
 
                 <div className='calendar-container' style={{ height: '50%', overflowY: 'auto', overflowX: 'auto' }}>
                     <FullCalendar

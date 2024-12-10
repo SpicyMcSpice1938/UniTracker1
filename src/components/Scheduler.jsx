@@ -5,7 +5,7 @@ import { useSchedule } from '../context/ScheduleContext';
 import { useNavigate } from 'react-router-dom';
 import ViewSchedule from './ViewSchedule';
 import courseData from '../courseData';
-import { TextInput, Tooltip, Card, Button, Text } from '@mantine/core';
+import { TextInput, Tooltip, Card, Button, Text, Title, Grid, Flex, AppShell, Box, Center } from '@mantine/core';
 
 const Scheduler = () => {
     const navigate = useNavigate();
@@ -55,16 +55,32 @@ const Scheduler = () => {
     const isFinalizeDisabled = overlap || repeatedCoursesBool;
 
     return (
-        <div style={{ display: 'flex' }}>
-            <div style={{ width: '15%', position: 'fixed', height: '100vh', borderRight: '1px solid black', padding: '10px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                    <button onClick={() => navigate('/')}>Go Back</button>
-                </div>
+        <AppShell role="main">
+            <AppShell.Navbar role="navigation" w="10%" height="100%" pr="1rem" withBorder>
+
+                <Grid mt="0.75rem" grow>
+                    <Grid.Col span={"auto"}></Grid.Col>
+                    <Grid.Col span={{ base: 12, md: 10 }}>    
+                        <Button variant="outline" w="100%" c="ut-purple.4" onClick={() => navigate('/')}>Go Back</Button>
+                    </Grid.Col>
+                    <Grid.Col span={"auto"}></Grid.Col>
+                </Grid>
+
                 <div style={{ marginTop: 'auto' }}>
                     {schedule.length > 0 && (
-                        <button onClick={() => setIsModalOpen(true)} style={{ display: 'block', width: '100%', marginBottom: '10px' }}>
-                            Calendar View
-                        </button>
+                        <Grid mb="0.5rem" grow>
+                            <Grid.Col span={"auto"}></Grid.Col>
+                            <Grid.Col span={{ base: 12, md: 10 }}>    
+                                <Button onClick={() => setIsModalOpen(!isModalOpen)} w="100%">
+                                {!isModalOpen ? (
+                                    "Calendar View"
+                                ) : (
+                                    "List View"
+                                )}
+                                </Button>
+                            </Grid.Col>
+                            <Grid.Col span={"auto"}></Grid.Col>
+                        </Grid>
                     )}
                     <Tooltip
                         label="Please resolve all scheduling conflicts and remove repeated courses before finalizing"
@@ -72,24 +88,36 @@ const Scheduler = () => {
                         position="top"
                         withArrow
                     >
-                        <button
-                            onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
-                            disabled={isFinalizeDisabled}
-                            style={{ display: 'block', width: '100%' }}
-                        >
-                            Finalize Schedule
-                        </button>
+                        <Grid mb="0.25rem" grow>
+                            <Grid.Col span={"auto"}></Grid.Col>
+                            <Grid.Col span={{ base: 12, md: 10 }}>    
+                                <Button
+                                    onClick={() => navigate('/thank-you')}  // Navigate to the ThankYouPage
+                                    disabled={isFinalizeDisabled}
+                                    style={{ display: 'block', width: '100%' }}
+                                >
+                                    Finalize
+                                </Button>                            
+                            </Grid.Col>
+                            <Grid.Col span={"auto"}></Grid.Col>
+                        </Grid>
+                        
 
                     </Tooltip>
                 </div>
-            </div>
-            <div style={{ marginLeft: '15%', padding: '10px' }}>
+            </AppShell.Navbar>
+
+            <div style={{ marginLeft: '12%', padding: '10px' }}>
+                <Title order={1} c="ut-purple.5">Choose Your Courses</Title>
                 <TextInput
                     placeholder="Filter courses..."
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                     style={{ width: '100%', marginBottom: '10px' }}
+                    aria-label='Filter courses'
                 />
+
+                <Grid>
                 {filteredCourses.map((course) => {
                     const isInSchedule = schedule.some((c) => c.id === course.id);
                     const diffSectionInSchedule = schedule.some((c) => c.courseCode === course.courseCode && c.id !== course.id);
@@ -106,16 +134,20 @@ const Scheduler = () => {
                     // if there's a conflict, dark red text+border button to remove from schedule? idk honestly. check how these work for contrast ratio in tota11y
                     // the text that tells if there is a conflict should be dark red. i think that should cover the contrast ratio.
                     return (
-                        <div key={course.id} style={{ marginBottom: '10px', minWidth: '600px', maxWidth: '100%' }}>
-                            <Card shadow="sm" padding="lg" radius="md" withBorder>
-                                <h3>{course.courseName}</h3>
-                                <h4>{course.name}</h4>
-                                <p>{course.meetingTimes}</p>
+                        <Grid.Col key={course.id} span={{ base: 12, md: 6, lg: 4 }}>
+                            <Card minWidth="600px" maxWidth="100%" shadow="md" padding={"1rem"} radius="md" withBorder>
+                                <Card.Section p="md" px="2rem">
+                                    <Title order={2} size={"1.5rem"}>{course.courseName}</Title>
+                                    <Title order={3} size="1.1rem" fs="italic" fw="lighter">{course.name}</Title>
+                                    <Text>{course.meetingTimes}</Text>
+                                </Card.Section>
 
+                                <Card.Section p="md" px="2rem">
                                 {isInSchedule ? (
                                     <Button
                                         variant="outline"
-                                        color="red"
+                                        color="red.9"
+                                        w="100%"
                                         onClick={() =>
                                             confirm('Remove from schedule?') &&
                                             removeCourseById(course.id)
@@ -125,8 +157,9 @@ const Scheduler = () => {
                                     </Button>
                                 ) : (
                                     <Button
-                                        variant="outline"
-                                        color="blue"
+                                        variant="filled"
+                                        color="violet.6"
+                                        w="100%"
                                         onClick={() => {
                                             if (!seenInstr && (diffSectionInSchedule || schedulingConflict)) {
                                                 if (confirm('Adding this class to the schedule will cause a conflict. You will not be able to resolve it until you remove it from the schedule through this page or clicking on it in the calendar view.')) {
@@ -143,18 +176,20 @@ const Scheduler = () => {
                                 )}
 
                                 {diffSectionInSchedule && (
-                                    <Text>Another section of this course is already in your schedule</Text>
+                                    <Text mt="sm" size="0.95rem" fw="bold">Another section of this course is already in your schedule</Text>
                                 )}
                                 {schedulingConflict && (
-                                    <Text>There is a scheduling conflict with another course in your schedule</Text>
+                                    <Text mt="sm" size="0.95rem" c="red.8" fw="bold">There is a scheduling conflict with another course in your schedule</Text>
                                 )}
+                                </Card.Section>
                             </Card>
-                        </div>
+                        </Grid.Col>
                     );
                 })}
+                </Grid>
             </div>
             <ViewSchedule isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} />
-        </div>
+        </AppShell>
     );
 };
 
